@@ -26,7 +26,6 @@ class Controller:
         self.prevPressed["s"] = False
         self.prevPressed["d"] = False
 
-
     def start(self):
         self._check_key_press()
         self.root.mainloop()
