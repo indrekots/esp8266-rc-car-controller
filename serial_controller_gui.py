@@ -28,51 +28,38 @@ class Controller:
 
 
     def start(self):
-        self._checkKeyPress()
+        self._check_key_press()
         self.root.mainloop()
 
-    def _checkKeyPress(self):
-        if self.pressed["w"] and self.prevPressed["w"] == False:
-            self.prevPressed["w"] = True
-            self.ser.write(b"\x01")
-            print("forward pressed")
+    def _check_for_press(self, key, command):
+        if self._is_pressed(key):
+            self.prevPressed[key] = True
+            self.ser.write(command)
+            print(key + " pressed")
 
-        if self.pressed["w"] == False and self.prevPressed["w"]:
-            self.prevPressed["w"] = False
-            self.ser.write(b"\x02")
-            print("forward released")
+    def _check_for_release(self, key, command):
+        if self._is_released(key):
+            self.prevPressed[key] = False
+            self.ser.write(command)
+            print(key + " released")
 
-        if self.pressed["s"] and self.prevPressed["s"] == False:
-            self.prevPressed["s"] = True
-            self.ser.write(b"\x03")
-            print("backwards pressed")
+    def _check_key_press(self):
+        self._check_for_press("w", b"\x01")
+        self._check_for_release("w", b"\x02")
+        self._check_for_press("s", b"\x03")
+        self._check_for_release("s", b"\x04")
+        self._check_for_press("d", b"\x05")
+        self._check_for_release("d", b"\x06")
+        self._check_for_press("a", b"\x07")
+        self._check_for_release("a", b"\x08")
 
-        if self.pressed["s"] == False and self.prevPressed["s"]:
-            self.prevPressed["s"] = False
-            self.ser.write(b"\x04")
-            print("backwards released")
+        self.root.after(10, self._check_key_press)
 
-        if self.pressed["d"] and self.prevPressed["d"] == False:
-            self.prevPressed["d"] = True
-            self.ser.write(b"\x05")
-            print("right pressed")
+    def _is_pressed(self, key):
+        return self.pressed[key] and self.prevPressed[key] == False
 
-        if self.pressed["d"] == False and self.prevPressed["d"]:
-            self.prevPressed["d"] = False
-            self.ser.write(b"\x06")
-            print("right released")
-
-        if self.pressed["a"] and self.prevPressed["a"] == False:
-            self.prevPressed["a"] = True
-            self.ser.write(b"\x07")
-            print("left pressed")
-
-        if self.pressed["a"] == False and self.prevPressed["a"]:
-            self.prevPressed["a"] = False
-            self.ser.write(b"\x08")
-            print("left released")
-
-        self.root.after(10, self._checkKeyPress)
+    def _is_released(self, key):
+        return self.pressed[key] == False and self.prevPressed[key]
 
     def _create_ui(self):
         self.root = tk.Tk()
