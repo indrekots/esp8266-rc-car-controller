@@ -1,5 +1,5 @@
 import tkinter as tk
-import serial
+import socket
 
 class Controller:
     def __init__(self):
@@ -7,14 +7,15 @@ class Controller:
         self.prevPressed = {}
         self._initPresses()
         self._create_ui()
-        self.ser = serial.Serial(
-            port='/dev/ttyACM0',
-            baudrate=115200,
-            parity=serial.PARITY_ODD,
-            stopbits=serial.STOPBITS_TWO,
-            bytesize=serial.SEVENBITS
-        )
-        self.ser.isOpen()
+        self._host = '192.168.1.101'
+        self._port = 1111
+
+    def _netcat(self, content):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((self._host, self._port))
+        s.sendall(content)
+        s.shutdown(socket.SHUT_WR)
+        s.close()
 
     def _initPresses(self):
         self.pressed["w"] = False
@@ -33,13 +34,13 @@ class Controller:
     def _check_for_press(self, key, command):
         if self._is_pressed(key):
             self.prevPressed[key] = True
-            self.ser.write(command)
+            self._netcat(command)
             print(key + " pressed")
 
     def _check_for_release(self, key, command):
         if self._is_released(key):
             self.prevPressed[key] = False
-            self.ser.write(command)
+            self._netcat(command)
             print(key + " released")
 
     def _check_key_press(self):
@@ -52,7 +53,7 @@ class Controller:
         self._check_for_press("a", b"\x07")
         self._check_for_release("a", b"\x08")
 
-        self.root.after(10, self._check_key_press)
+        self.root.after(20, self._check_key_press)
 
     def _is_pressed(self, key):
         return self.pressed[key] and self.prevPressed[key] == False
