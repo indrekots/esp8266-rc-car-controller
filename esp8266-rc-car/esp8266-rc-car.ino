@@ -1,3 +1,4 @@
+#include <WiFiUdp.h>
 #include <ESP8266WiFi.h>
 
 const char* ssid = "joosep112";
@@ -11,7 +12,7 @@ const int LEFT = 13;
 const int SERVER_PORT = 1111;
 const int BAUD_RATE = 9600;
 
-int incomingByte = 0;
+byte incomingByte = 0;
 
 bool forwardsPressed = false;
 bool backwardsPressed = false;
@@ -27,7 +28,10 @@ const int RIGHT_RELEASED = 6;
 const int LEFT_PRESSED = 7;
 const int LEFT_RELEASED = 8;
 
-WiFiServer server(SERVER_PORT);
+byte packetBuffer[512];
+
+//WiFiServer server(SERVER_PORT);
+WiFiUDP Udp;
 
 void initOutputs() {
   pinMode(FORWARDS, OUTPUT);
@@ -49,13 +53,14 @@ void connectWifi() {
 
   Serial.println("");
   Serial.println("WiFi connected");
+  Udp.begin(SERVER_PORT);
 }
 
-void startServer() {
+/*void startServer() {
   server.begin();
   Serial.println("Server started");
   Serial.println(WiFi.localIP());
-}
+}*/
 
 void moveForwards() {
   digitalWrite(BACKWARDS, LOW);
@@ -146,27 +151,29 @@ void setup() {
 
   initOutputs();
   connectWifi();
-  startServer();
+  //startServer();
 }
 
 void loop() {
-  // Check if a client has connected
-  WiFiClient client = server.available();
-  if (!client) {
-    return;
-  }
+  int noBytes = Udp.parsePacket();
+  String received_command = "";
 
-  // Wait until the client sends some data
-  Serial.println("new client");
-  while(!client.available()){
-    delay(1);
-  }
+  if ( noBytes ) {
+    Serial.print(millis() / 1000);
+    Serial.print(":Packet of ");
+    Serial.print(noBytes);
+    Serial.print(" received from ");
+    Serial.print(Udp.remoteIP());
+    Serial.print(":");
+    Serial.println(Udp.remotePort());
+    // We've received a packet, read the data from it
+    Udp.read(packetBuffer,noBytes); // read the packet into the buffer
+    Serial.println();
 
-  incomingByte = client.read();
+    Serial.println(packetBuffer[0]);
+    incomingByte = packetBuffer[0];
+    Serial.println();
+  }
   detectKeyPresses();
   handlePinOutputs();
-
-  Serial.println(incomingByte);
-  client.flush();
-  Serial.println("Client disonnected");
 }
