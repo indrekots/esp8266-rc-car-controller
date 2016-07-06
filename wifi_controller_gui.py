@@ -11,11 +11,8 @@ class Controller:
         self._port = 1111
 
     def _netcat(self, content):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((self._host, self._port))
-        s.sendall(content)
-        s.shutdown(socket.SHUT_WR)
-        s.close()
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.sendto(content, (self._host, self._port))
 
     def _initPresses(self):
         self.pressed["w"] = False
