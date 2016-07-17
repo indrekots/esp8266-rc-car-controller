@@ -11,15 +11,15 @@ This repository contains code to control an RC car using an ESP8266 board with y
 
 Open `esp8266-rc-car` with your Arduino IDE and upload the sketch to your Arduino board. Make sure to enter your WiFi SSID and password in the header of the file.
 
-```
+```cpp
 const char* ssid = "SSID"; //Enter your wifi network SSID
 const char* password = "PASSWORD"; //Enter your wifi network password
 ```
 
-Open `serial_controller_gui.py` with a text editor and change the serial port in the constructor to match your needs. Then run the script with:
+Open your terminal and run the python script with
 
 ```bash
-python serial_controller_gui.py
+python wifi_controller_gui.py --host=<IP address of the car>
 ```
 
 Press W, A, S, D keys to control your RC car.
