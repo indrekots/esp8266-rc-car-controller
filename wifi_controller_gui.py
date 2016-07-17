@@ -80,25 +80,26 @@ class Controller:
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "H", ["help", "host="])
+        opts, args = getopt.getopt(sys.argv[1:], "h:", ["host="])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
         sys.exit(2)
     host = ""
     for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        elif o in ("-H", "--host"):
+        if o in ("-h", "--host"):
             host = a
 
     if host == "":
-        print("Did not define host, use -H or --host to pass the host name of the car")
+        print("Did not define host, use -h or --host to pass the host name of the car")
         sys.exit(2)
 
     p = Controller(host)
     p.start()
+
+def usage():
+    print("Available options:")
+    print("-h, --host  Define RC car IP address")
 
 
 if __name__ == "__main__":
