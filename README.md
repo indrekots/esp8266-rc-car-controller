@@ -1,6 +1,6 @@
 #Control an RC car with ESP8266 over WiFi
 
-This repository contains code to control an RC car using an ESP8266 board with your regular keyboard. For more information head over to [this blog post](http://blog.indrek.io/articles/how-to-control-an-rc-car-over-wifi-with-esp8266/) to see how to set up an RC car.
+This repository contains code to control an RC car over WiFi using an ESP8266 board. For more information head over to [this blog post](http://blog.indrek.io/articles/how-to-control-an-rc-car-over-wifi-with-esp8266/) to see how to set up an RC car.
 
 ##Requirements
 
