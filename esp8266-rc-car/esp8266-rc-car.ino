@@ -1,8 +1,8 @@
 #include <WiFiUdp.h>
 #include <ESP8266WiFi.h>
 
-const char* ssid = "joosep112";
-const char* password = "BCCD51AA63";
+const char* ssid = "SSID"; //Enter your wifi network SSID
+const char* password = "PASSWORD"; //Enter your wifi network password
 
 const int FORWARDS = 5;
 const int BACKWARDS = 0;
@@ -30,7 +30,6 @@ const int LEFT_RELEASED = 8;
 
 byte packetBuffer[512];
 
-//WiFiServer server(SERVER_PORT);
 WiFiUDP Udp;
 
 void initOutputs() {
@@ -55,12 +54,6 @@ void connectWifi() {
   Serial.println("WiFi connected");
   Udp.begin(SERVER_PORT);
 }
-
-/*void startServer() {
-  server.begin();
-  Serial.println("Server started");
-  Serial.println(WiFi.localIP());
-}*/
 
 void moveForwards() {
   digitalWrite(BACKWARDS, LOW);
@@ -151,7 +144,6 @@ void setup() {
 
   initOutputs();
   connectWifi();
-  //startServer();
 }
 
 void loop() {
@@ -166,8 +158,8 @@ void loop() {
     Serial.print(Udp.remoteIP());
     Serial.print(":");
     Serial.println(Udp.remotePort());
-    // We've received a packet, read the data from it
-    Udp.read(packetBuffer,noBytes); // read the packet into the buffer
+
+    Udp.read(packetBuffer,noBytes);
     Serial.println();
 
     Serial.println(packetBuffer[0]);

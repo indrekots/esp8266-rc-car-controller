@@ -1,14 +1,17 @@
 import tkinter as tk
 import socket
+import getopt, sys
 
 class Controller:
-    def __init__(self):
+    DEFAULT_PORT = 1111
+
+    def __init__(self, ip):
         self.pressed = {}
         self.prevPressed = {}
         self._initPresses()
         self._create_ui()
-        self._host = '192.168.1.101'
-        self._port = 1111
+        self._host = ip
+        self._port = self.DEFAULT_PORT
 
     def _netcat(self, content):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -75,6 +78,28 @@ class Controller:
     def _released(self, event):
         self.pressed[event.char] = False
 
-if __name__ == "__main__":
-    p = Controller()
+def main():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "H", ["help", "host="])
+    except getopt.GetoptError as err:
+        print(str(err))
+        usage()
+        sys.exit(2)
+    host = ""
+    for o, a in opts:
+        if o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif o in ("-H", "--host"):
+            host = a
+
+    if host == "":
+        print("Did not define host, use -H or --host to pass the host name of the car")
+        sys.exit(2)
+
+    p = Controller(host)
     p.start()
+
+
+if __name__ == "__main__":
+    main()
